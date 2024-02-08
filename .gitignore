@@ -172,3 +172,5 @@ log*
 
 **/dataset/
 *.pkl
+
+kaggle.json
