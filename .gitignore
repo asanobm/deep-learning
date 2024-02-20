@@ -174,3 +174,5 @@ log*
 *.pkl
 
 kaggle.json
+
+**/**/example/
