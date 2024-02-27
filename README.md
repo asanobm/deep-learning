@@ -72,3 +72,7 @@ graph LR
 * [ ] LangChain 써보기 (챗지피티는 연동 안할꺼임:money_mouth_face:)
 * [ ] 블로그에 쓸만한 글 쓰기 (아주 비 현설적인 목표)
 * [ ] 논문 읽기 (아주 많이 읽어야함)
+
+## Learning Curve
+
+![alt text](<딥러닝 러닝커브.png>)
