@@ -6,3 +6,10 @@ class Variable:
 
     def set_creator(self, func):
         self.creator = func
+
+    def backward(self):
+        f = self.creator
+        if f is not None:
+            x = f.input  # 함수의 입력을 가져온다.
+            x.grad = f.backward(self.grad)  # 함수의 backward 메서드를 호출한다.
+            x.backward()  # 하나 앞 변수의 backward 메서드를 호출한다.
