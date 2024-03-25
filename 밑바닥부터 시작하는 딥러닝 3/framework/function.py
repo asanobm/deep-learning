@@ -1,5 +1,6 @@
 """Function base class
 """
+import numpy as np
 from .variable import Variable
 
 
@@ -19,3 +20,11 @@ class Square(Function):
 
     def forward(self, x):
         return x ** 2
+
+
+class Exp(Function):
+    """$y=e^x$를 계산한다.
+    """
+
+    def forward(self, x):
+        return np.exp(x)
