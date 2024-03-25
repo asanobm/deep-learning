@@ -9,7 +9,9 @@ class Function:
         x = input.data
         y = self.forward(x)
         output = Variable(y)
+        output.set_creator(self)  # 출력 변수에 창조자를 설정한다.
         self.input = input  # 입력 변수를 기억(보관)한다.
+        self.output = output  # 출력 변수를 저장한다.
         return output
 
     def forward(self, x):
