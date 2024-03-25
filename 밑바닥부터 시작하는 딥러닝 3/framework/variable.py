@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Variable:
     def __init__(self, data):
         self.data = data  # 데이터 ndarray
@@ -16,6 +19,10 @@ class Variable:
 
     def backward(self):
         """재귀에서 반복문으로 변경"""
+
+        if self.grad is None:
+            self.grad = np.ones_like(self.data)
+
         functions = [self.creator]
 
         while functions:
