@@ -4,11 +4,17 @@ import numpy as np
 from .variable import Variable
 
 
+def as_array(x):
+    if np.isscalar(x):
+        return np.array(x)
+    return x
+
+
 class Function:
     def __call__(self, input):
         x = input.data
         y = self.forward(x)
-        output = Variable(y)
+        output = Variable(as_array(y))
         output.set_creator(self)  # 출력 변수에 창조자를 설정한다.
         self.input = input  # 입력 변수를 기억(보관)한다.
         self.output = output  # 출력 변수를 저장한다.

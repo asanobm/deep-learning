@@ -2,7 +2,10 @@ import numpy as np
 
 
 class Variable:
-    def __init__(self, data):
+    def __init__(self, data: np.ndarray):
+        if data is not None:
+            if not isinstance(data, np.ndarray):
+                raise TypeError(f'{type(data)} is not supported')
         self.data = data  # 데이터 ndarray
         self.grad = None  # 미분값을 저장하는 변수 ndarray
         self.creator = None  # 변수의 창조자(creator)를 기억하는 변수
