@@ -11,9 +11,11 @@ def as_array(x):
 
 
 class Function:
-    def __call__(self, inputs):
+    def __call__(self, *inputs):
         xs = [x.data for x in inputs] # Variable 인스턴스로부터 데이터를 꺼낸다.
-        ys = self.forward(xs) # forward 메서드에서 구체적인 계산을 수행한다.
+        ys = self.forward(*xs) # forward 메서드에서 구체적인 계산을 수행한다.
+        if not isinstance(ys, tuple): # 튜플이 아닌 경우 추가 지원
+            ys = (ys,)
         outputs = [Variable(as_array(y)) for y in ys] # 계산된 데이터를 Variable 인스턴스로 다시 감싼다.
         
         for output in outputs:
@@ -21,7 +23,7 @@ class Function:
             
         self.inputs = inputs  # 입력 변수를 기억(보관)한다.
         self.outputs = outputs  # 출력 변수를 저장한다.
-        return outputs
+        return outputs if len(outputs) > 1 else outputs[0] # 출력이 하나라면 첫 번째 요소를 반환한다.
 
     def forward(self, x):
         raise NotImplementedError()
@@ -61,6 +63,12 @@ class Exp(Function):
         x = self.input.data
         gx = np.exp(x) * gy
         return gx
+    
+    
+class Add(Function):
+    def forward(self, x0, x1):
+        y = x0 + x1
+        return (y,)  # 반환값을 튜플로 묶는다.
 
 
 def square(x):
@@ -69,3 +77,6 @@ def square(x):
 
 def exp(x):
     return Exp()(x)
+
+def add(x0, x1):
+    return Add()(x0, x1)
