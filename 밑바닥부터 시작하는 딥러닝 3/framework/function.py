@@ -11,14 +11,17 @@ def as_array(x):
 
 
 class Function:
-    def __call__(self, input):
-        x = input.data
-        y = self.forward(x)
-        output = Variable(as_array(y))
-        output.set_creator(self)  # 출력 변수에 창조자를 설정한다.
-        self.input = input  # 입력 변수를 기억(보관)한다.
-        self.output = output  # 출력 변수를 저장한다.
-        return output
+    def __call__(self, inputs):
+        xs = [x.data for x in inputs] # Variable 인스턴스로부터 데이터를 꺼낸다.
+        ys = self.forward(xs) # forward 메서드에서 구체적인 계산을 수행한다.
+        outputs = [Variable(as_array(y)) for y in ys] # 계산된 데이터를 Variable 인스턴스로 다시 감싼다.
+        
+        for output in outputs:
+            output.set_creator(self) # 원산지 표시를 한다.
+            
+        self.inputs = inputs  # 입력 변수를 기억(보관)한다.
+        self.outputs = outputs  # 출력 변수를 저장한다.
+        return outputs
 
     def forward(self, x):
         raise NotImplementedError()
