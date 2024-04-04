@@ -17,7 +17,7 @@ class Function:
         if not isinstance(ys, tuple): # 튜플이 아닌 경우 추가 지원
             ys = (ys,)
         outputs = [Variable(as_array(y)) for y in ys] # 계산된 데이터를 Variable 인스턴스로 다시 감싼다.
-        
+        self.generation = max([x.generation for x in inputs]) # 입력 변수가 둘 이상일 때 가장 큰 generation을 선택한다.
         for output in outputs:
             output.set_creator(self) # 원산지 표시를 한다.
             
@@ -43,7 +43,7 @@ class Square(Function):
     def backward(self, gy):
         """$$\frac{dy}{dx} = 2x$$
         """
-        x = self.input.data
+        x = self.inputs[0].data
         gx = 2 * x * gy
         return gx
 
@@ -69,6 +69,9 @@ class Add(Function):
     def forward(self, x0, x1):
         y = x0 + x1
         return (y,)  # 반환값을 튜플로 묶는다.
+    
+    def backward(self, gy):
+        return gy, gy
 
 
 def square(x):
