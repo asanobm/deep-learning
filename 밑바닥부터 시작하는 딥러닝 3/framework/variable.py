@@ -3,11 +3,12 @@ import numpy as np
 
 
 class Variable:
-    def __init__(self, data: np.ndarray):
+    def __init__(self, data: np.ndarray, name=None):
         if data is not None:
             if not isinstance(data, np.ndarray):
                 raise TypeError(f'{type(data)} is not supported')
         self.data = data  # 데이터 ndarray
+        self.name = name
         self.grad = None  # 미분값을 저장하는 변수 ndarray
         self.creator = None  # 변수의 창조자(creator)를 기억하는 변수
         self.generation = 0  # 세대 수를 기록하는 변수
@@ -70,3 +71,28 @@ class Variable:
 
     def cleargrad(self):
         self.grad = None
+        
+    @property
+    def shape(self):
+        return self.data.shape
+    
+    @property
+    def ndim(self):
+        return self.data.ndim
+    
+    @property
+    def size(self):
+        return self.data.size
+    
+    @property
+    def dtype(self):
+        return self.data.dtype
+    
+    def __len__(self):
+        return len(self.data)
+    
+    def __repr__(self) -> str:
+        if self.data is None:
+            return 'variable(None)'
+        p = str(self.data).replace('\n', '\n' + ' ' * 9)
+        return f'variable({p})'
