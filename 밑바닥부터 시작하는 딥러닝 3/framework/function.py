@@ -2,6 +2,7 @@
 """
 import numpy as np
 from .variable import Variable
+from .config import Config
 
 
 def as_array(x):
@@ -17,13 +18,15 @@ class Function:
         if not isinstance(ys, tuple): # 튜플이 아닌 경우 추가 지원
             ys = (ys,)
         outputs = [Variable(as_array(y)) for y in ys] # 계산된 데이터를 Variable 인스턴스로 다시 감싼다.
-        self.generation = max([x.generation for x in inputs]) # 입력 변수가 둘 이상일 때 가장 큰 generation을 선택한다.
-        for output in outputs:
-            output.set_creator(self) # 원산지 표시를 한다.
-            
-        self.inputs = inputs  # 입력 변수를 기억(보관)한다.
-        # self.outputs = outputs  # 출력 변수를 저장한다.
-        self.outputs = [weakref.ref(output) for output in outputs] # 출력변수를 약한 참조로 가지기
+        if Config.enable_backprop: # 역전파가 필요한 경우
+            self.generation = max([x.generation for x in inputs]) # 입력 변수가 둘 이상일 때 가장 큰 generation을 선택한다.
+            for output in outputs:
+                output.set_creator(self) # 원산지 표시를 한다.
+                
+            self.inputs = inputs  # 입력 변수를 기억(보관)한다.
+            # self.outputs = outputs  # 출력 변수를 저장한다.
+            self.outputs = [weakref.ref(output) for output in outputs] # 출력변수를 약한 참조로 가지기
+        
         return outputs if len(outputs) > 1 else outputs[0] # 출력이 하나라면 첫 번째 요소를 반환한다.
 
     def forward(self, x):

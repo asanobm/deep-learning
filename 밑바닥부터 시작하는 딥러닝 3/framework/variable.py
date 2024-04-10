@@ -23,7 +23,7 @@ class Variable:
     #         x.grad = f.backward(self.grad)  # 함수의 backward 메서드를 호출한다.
     #         x.backward()  # 하나 앞 변수의 backward 메서드를 호출한다.
 
-    def backward(self):
+    def backward(self, retain_grad=False):
         """재귀에서 반복문으로 변경"""
 
         if self.grad is None:
@@ -64,6 +64,9 @@ class Variable:
                 
                 if x.creator is not None: # 하나 앞의 함수를 리스트에 추가한다.
                     add_func(x.creator)
+            if not retain_grad:
+                for y in f.outputs:
+                    y().grad = None
 
     def cleargrad(self):
         self.grad = None
