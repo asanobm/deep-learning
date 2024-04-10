@@ -22,7 +22,8 @@ class Function:
             output.set_creator(self) # 원산지 표시를 한다.
             
         self.inputs = inputs  # 입력 변수를 기억(보관)한다.
-        self.outputs = outputs  # 출력 변수를 저장한다.
+        # self.outputs = outputs  # 출력 변수를 저장한다.
+        self.outputs = [weakref.ref(output) for output in outputs] # 출력변수를 약한 참조로 가지기
         return outputs if len(outputs) > 1 else outputs[0] # 출력이 하나라면 첫 번째 요소를 반환한다.
 
     def forward(self, x):

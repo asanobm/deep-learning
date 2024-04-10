@@ -1,3 +1,4 @@
+import weakref
 import numpy as np
 
 
@@ -29,26 +30,27 @@ class Variable:
             self.grad = np.ones_like(self.data)
 
         # functions = [self.creator]
-        functions = []
+        funcs = []
         
         seen_set = set() # 중복을 방지하기 위한 집합(set) 자료구조
         def add_func(f):
             if f not in seen_set:
-                functions.append(f)
+                funcs.append(f)
                 seen_set.add(f)
-                functions.sort(key=lambda x: x.generation)
+                funcs.sort(key=lambda x: x.generation)
         
         add_func(self.creator)
 
-        while functions:
-            f = functions.pop()  # 함수를 가져온다.
+        while funcs:
+            f = funcs.pop()  # 함수를 가져온다.
             # x, y = f.input, f.output  # 함수의 입력과 출력을 가져온다.
             # x.grad = f.backward(y.grad)  # backward 메서드를 호출한다.
 
             # if x.creator is not None:
             #     functions.append(x.creator)  # 하나 앞의 함수를 리스트에 추가한다.
             
-            gys = [output.grad for output in f.outputs] # 출력변수인 output에서 출력변수의 미분을 가져온다.
+            # gys = [output.grad for output in f.outputs] # 출력변수인 output에서 출력변수의 미분을 가져온다.
+            gys = [output().grad for output in f.outputs] # 출력변수인 output에서 출력변수의 미분을 가져온다.(output은 약한 참조이므로 ()를 붙여준다.)
             gxs = f.backward(*gys) # 역전파 호출
             if not isinstance(gxs, tuple): # 튜플이 아닌 경우 추가 지원
                 gxs = (gxs,)
