@@ -176,3 +176,5 @@ log*
 kaggle.json
 
 **/**/example/
+
+**/datasets
