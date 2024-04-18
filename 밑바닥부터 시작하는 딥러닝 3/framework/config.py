@@ -14,3 +14,13 @@ def using_config(name, value):
     
 def no_grad():
   return using_config('enable_backprop', False)
+
+def as_array(x):
+  if np.isscalar(x):
+    return np.array(x)
+  return x
+
+def as_variable(obj):
+  if isinstance(obj, Variable):
+    return obj
+  return Variable(obj)
