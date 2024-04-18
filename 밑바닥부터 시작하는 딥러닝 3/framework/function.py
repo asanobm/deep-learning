@@ -1,8 +1,7 @@
-"""Function base class
-"""
 import numpy as np
-from .variable import Variable
-from .config import Config
+import weakref
+from framework.variable import Variable
+from framework.config import Config
 
 
 def as_array(x):
@@ -57,12 +56,14 @@ class Exp(Function):
     """
 
     def forward(self, x):
-        """$$y = \exp(x)$$
+        """
+        $$y = \exp(x)$$
         """
         return np.exp(x)
 
     def backward(self, gy):
-        """$$\frac{dy}{dx} = \exp(x)$$
+        """
+        $$\frac{dy}{dx} = \exp(x)$$
         """
         x = self.input.data
         gx = np.exp(x) * gy
