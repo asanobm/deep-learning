@@ -25,49 +25,44 @@ class Variable:
     #         x.backward()  # 하나 앞 변수의 backward 메서드를 호출한다.
 
     def backward(self, retain_grad=False):
-        """재귀에서 반복문으로 변경"""
-
+        # Variable 클래스의 backward 메서드는 반복문을 사용해 구현한다.
         if self.grad is None:
             self.grad = np.ones_like(self.data)
 
-        # functions = [self.creator]
+        # funcs 리스트에는 Variable 인스턴스의 creator가 차례로 추가된다.
         funcs = []
-        
-        seen_set = set() # 중복을 방지하기 위한 집합(set) 자료구조
+        # seen_set은 중복을 방지하기 위한 집합(set)이다.        
+        seen_set = set()
+
+        # funcs 리스트에 creator를 추가하고, 그 함수를 func이라는 변수에 저장한다.
         def add_func(f):
             if f not in seen_set:
-                funcs.append(f)
-                seen_set.add(f)
-                funcs.sort(key=lambda x: x.generation)
-        
-        add_func(self.creator)
+                funcs.append(f) # 중복을 방지하기 위해 funcs 리스트에 추가한다.
+                seen_set.add(f) # 추가할 때 집합에도 추가한다.
+                funcs.sort(key=lambda x: x.generation) # 세대 순으로 정렬한다.
 
+        add_func(self.creator) # 첫 번째 함수를 추가한다.
+
+        # funcs 리스트에 원소가 있는 동안 반복하며 역전파를 수행한다.
         while funcs:
-            f = funcs.pop()  # 함수를 가져온다.
-            # x, y = f.input, f.output  # 함수의 입력과 출력을 가져온다.
-            # x.grad = f.backward(y.grad)  # backward 메서드를 호출한다.
+            f = funcs.pop() # funcs 리스트의 마지막 원소를 가져온다.
+            gys = [output().grad for output in f.outputs]  # 출력변수인 outputs의 grad를 리스트에 담는다.
+            gxs = f.backward(*gys)  # f의 역전파를 호출한다. f는 Function 클래스의 인스턴스이다.
+            if not isinstance(gxs, tuple): # gxs가 튜플이 아닌 경우 추가 지원
+                gxs = (gxs,) # 튜플로 변환한다.
 
-            # if x.creator is not None:
-            #     functions.append(x.creator)  # 하나 앞의 함수를 리스트에 추가한다.
-            
-            # gys = [output.grad for output in f.outputs] # 출력변수인 output에서 출력변수의 미분을 가져온다.
-            gys = [output().grad for output in f.outputs] # 출력변수인 output에서 출력변수의 미분을 가져온다.(output은 약한 참조이므로 ()를 붙여준다.)
-            gxs = f.backward(*gys) # 역전파 호출
-            if not isinstance(gxs, tuple): # 튜플이 아닌 경우 추가 지원
-                gxs = (gxs,)
-                
-            for x, gx in zip(f.inputs, gxs): # 역전파로 전파되는 미분을 Variable의 인스턴스 변수 grad에 저장한다.
-                # x.grad = gx # 같은 변수를 반복 사용할 경우 덮어쓰기 때문에 주의해야 한다.
-                if x.grad is None:
-                    x.grad = gx
-                else:
-                    x.grad = x.grad + gx
-                
-                if x.creator is not None: # 하나 앞의 함수를 리스트에 추가한다.
+            for x, gx in zip(f.inputs, gxs): # 역전파로 전파되는 미분값을 Variable의 grad 필드에 담는다.
+                if x.grad is None: # 미분값을 처음 설정할 때는 gx를 그대로 대입한다.
+                    x.grad = gx # 미분값을 저장한다.
+                else:         # 그렇지 않으면 기존에 저장된 미분값에 gx를 더한다.
+                    x.grad = x.grad + gx 
+
+                if x.creator is not None: # 한 번 더 역전파를 하기 위해 add_func 함수를 호출한다.
                     add_func(x.creator)
-            if not retain_grad:
+
+            if not retain_grad: # retain_grad가 False인 경우 중간 변수의 미분값을 모두 None으로 설정한다.
                 for y in f.outputs:
-                    y().grad = None
+                    y().grad = None 
 
     def cleargrad(self):
         self.grad = None
