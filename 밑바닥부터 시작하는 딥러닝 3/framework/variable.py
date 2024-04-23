@@ -2,6 +2,11 @@ import weakref
 import numpy as np
 import framework.function as F
 class Variable:
+    # ## 21.4 좌항이 ndarray 인스턴스일 때의 연산자 우선순위 설정
+    # 연산자 우선순위(?)를 설정한다.
+    # np.ndarray와 Variable 인스턴스의 연산자 우선순위를 설정한다.
+    # 200으로 설정한 이유는 np.ndarray의 우선순위가 100이기 때문이다.
+    __array_priority__ = 200
     def __init__(self, data: np.ndarray, name=None):
         if data is not None:
             if not isinstance(data, np.ndarray):
