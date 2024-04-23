@@ -91,3 +91,4 @@ class Variable:
             return 'variable(None)'
         p = str(self.data).replace('\n', '\n' + ' ' * 9)
         return f'variable({p})'
+    
