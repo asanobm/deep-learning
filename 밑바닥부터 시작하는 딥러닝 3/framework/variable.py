@@ -1,7 +1,6 @@
 import weakref
 import numpy as np
-
-
+import framework.function as F
 class Variable:
     def __init__(self, data: np.ndarray, name=None):
         if data is not None:
@@ -91,4 +90,3 @@ class Variable:
             return 'variable(None)'
         p = str(self.data).replace('\n', '\n' + ' ' * 9)
         return f'variable({p})'
-    

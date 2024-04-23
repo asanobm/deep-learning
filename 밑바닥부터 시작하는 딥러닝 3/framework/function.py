@@ -2,16 +2,13 @@ import numpy as np
 import weakref
 from framework.variable import Variable
 from framework.config import Config
-
-
-def as_array(x):
-    if np.isscalar(x):
-        return np.array(x)
-    return x
+from framework.common import as_array, as_variable
 
 
 class Function:
     def __call__(self, *inputs):
+        # 21. 연산자 오버로드(2)
+        inputs = [as_variable(x) for x in inputs] # Variable로 변환한다.
         xs = [x.data for x in inputs] # Variable 인스턴스로부터 데이터를 꺼낸다.
         ys = self.forward(*xs) # forward 메서드에서 구체적인 계산을 수행한다.
         if not isinstance(ys, tuple): # 튜플이 아닌 경우 추가 지원
@@ -85,6 +82,7 @@ class Add(Function):
         return gy, gy
     
 def add(x0, x1):
+    x1 = as_array(x1)
     return Add()(x0, x1)
     
 class Mul(Function):
@@ -97,4 +95,5 @@ class Mul(Function):
         return gy * x1, gy * x0
 
 def mul(x0, x1):
+    x1 = as_array(x1)
     return Mul()(x0, x1)
