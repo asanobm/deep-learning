@@ -2,6 +2,7 @@ from .function import *
 from .variable import Variable
 from .config import *
 from .common import *
+from .utils import *
 
 Variable.__add__ = add
 Variable.__mul__ = mul
