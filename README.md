@@ -91,3 +91,21 @@ sudo apt-get install -y cuda-drivers
 sudo apt-get install -y nvidia-driver-550-open
 sudo apt-get install -y cuda-drivers-550
 ```
+
+## Install Python Environment
+```bash
+conda install python==3.11.10
+
+conda install pytorch torchvision torchaudio pytorch-cuda=12.4 -c pytorch -c nvidia -y
+conda install tokenizers -y
+conda install datasets -y
+conda install hugginface_hub -y
+conda install transformers -y
+conda install pandas matplotlib jupyter -y
+# pip install tensorflow
+pip install keras
+pip install scikit-learn
+pip install opencv-python
+pip install pillow
+pip install tqdm
+pip install umap-learn
