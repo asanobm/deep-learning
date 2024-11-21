@@ -180,3 +180,4 @@ kaggle.json
 **/datasets
 
 **/**/runs/
+**/**/mlruns/
