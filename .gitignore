@@ -181,3 +181,4 @@ kaggle.json
 
 **/**/runs/
 **/**/mlruns/
+**/**/models/
